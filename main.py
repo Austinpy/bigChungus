@@ -1,7 +1,22 @@
+# To run api:
+# uvicorn main:app --reload
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 import json
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:8080",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    # allow_credentials=True,
+    # allow_methods=["*"],
+    # allow_headers=["*"],
+)
 
 
 @app.get("/")
@@ -12,7 +27,7 @@ async def root():
 @app.get("/all-champs")
 async def get_all_champ_data():
     with open('AllChampsDetailed.json', 'r') as all_champs:
-        return json.load(all_champs)
+        return json.load(all_champs)['data']
 
 
 @app.get("/all-champ-names")
@@ -41,3 +56,8 @@ async def get_champ_by_name(champion: str):
             return all_champs[champ]
     else:
         raise HTTPException(status_code=404, detail="Champion not found.")
+
+
+@app.get("/test-api")
+async def test_api():
+    return ''
